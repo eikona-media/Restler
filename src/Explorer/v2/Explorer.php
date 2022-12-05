@@ -130,6 +130,8 @@ class Explorer implements iProvideMultiVersionApi
     protected $_authenticated = false;
     protected $cacheName = '';
 
+    public $showAllVersions = false;
+
     /**
      * Maximum api version supported by the api class
      * @return int
@@ -214,7 +216,20 @@ class Explorer implements iProvideMultiVersionApi
         $r->produces = $this->restler->getWritableMimeTypes();
         $r->consumes = $this->restler->getReadableMimeTypes();
 
-        $r->paths = $this->paths($version);
+        if ($this->showAllVersions) {
+            $r->paths = [];
+            $versions = [];
+            for ($apiVersion = $this->restler->getApiMinimumVersion();
+                 $apiVersion <= $this->restler->getApiVersion();
+                 $apiVersion++) {
+                $r->paths += $this->paths($apiVersion);
+                $versions[] = $apiVersion;
+            }
+            $version = implode('+', $versions);
+        } else {
+            $r->paths = $this->paths($version);
+        }
+
         $r->definitions = (object)$this->models;
         $r->securityDefinitions = $this->securityDefinitions();
         $r->info = compact('version') +

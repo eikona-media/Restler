@@ -1575,6 +1575,15 @@ class Restler extends EventDispatcher
     }
 
     /**
+     * Minimum API version
+     *
+     * @return int
+     */
+    public function getApiMinimumVersion() {
+        return $this->apiMinimumVersion;
+    }
+
+    /**
      * Base Url of the API Service
      *
      * @return string
